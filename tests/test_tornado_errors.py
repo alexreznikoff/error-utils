@@ -8,7 +8,7 @@ from tornado.escape import json_decode, json_encode
 
 from error_utils.errors import AccessDeniedError, BaseErrorHandler, Error, ExceptionsProcessor, InternalError
 from error_utils.errors.types import ErrorType
-from error_utils.framework_helpers.tornado import COMMON_ERROR_HANDLERS, handle_error
+from error_utils.framework_helpers.tornado import TORNADO_ERROR_HANDLERS, handle_error
 
 
 class ValidationErrorHandler(BaseErrorHandler):
@@ -23,7 +23,7 @@ class ValidationErrorHandler(BaseErrorHandler):
         )
 
 
-processor = ExceptionsProcessor(*COMMON_ERROR_HANDLERS, ValidationErrorHandler)
+processor = ExceptionsProcessor(*TORNADO_ERROR_HANDLERS, ValidationErrorHandler)
 
 
 class BaseView(tornado.web.RequestHandler):

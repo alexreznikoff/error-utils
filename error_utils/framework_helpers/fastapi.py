@@ -32,7 +32,7 @@ class ValidationErrorHandler(BaseErrorHandler):
         )
 
 
-COMMON_ERROR_HANDLERS = [
+FASTAPI_ERROR_HANDLERS = [
     FastAPIErrorHandler,
     ValidationErrorHandler,
     BaseErrorHandler,

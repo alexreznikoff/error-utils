@@ -17,7 +17,7 @@ class TornadoErrorHandler(BaseErrorHandler):
         )
 
 
-COMMON_ERROR_HANDLERS = [
+TORNADO_ERROR_HANDLERS = [
     BaseErrorHandler,
     TornadoErrorHandler,
 ]

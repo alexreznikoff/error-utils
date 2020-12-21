@@ -7,7 +7,7 @@ from marshmallow import Schema, fields
 from marshmallow.exceptions import ValidationError
 
 from error_utils.errors.types import ErrorType
-from error_utils.framework_helpers.aiohttp import COMMON_ERROR_HANDLERS, create_error_handling_middleware
+from error_utils.framework_helpers.aiohttp import AIOHTTP_ERROR_HANDLERS, create_error_handling_middleware
 from error_utils.errors import (
     AccessDeniedError,
     AuthorizationError,
@@ -72,7 +72,7 @@ def app():
     app = Application(
         middlewares=[
             create_error_handling_middleware(
-                ExceptionsProcessor(ValidationErrorHandler, *COMMON_ERROR_HANDLERS)
+                ExceptionsProcessor(ValidationErrorHandler, *AIOHTTP_ERROR_HANDLERS)
             )
         ]
     )

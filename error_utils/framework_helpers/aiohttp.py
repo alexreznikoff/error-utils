@@ -18,7 +18,7 @@ class AiohttpErrorHandler(BaseErrorHandler):
         )
 
 
-COMMON_ERROR_HANDLERS = [
+AIOHTTP_ERROR_HANDLERS = [
     AiohttpErrorHandler,
     BaseErrorHandler,
 ]

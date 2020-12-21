@@ -7,7 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.testclient import TestClient
 
 from error_utils.errors import InternalError, AccessDeniedError, ExceptionsProcessor
-from error_utils.framework_helpers.fastapi import COMMON_ERROR_HANDLERS, create_error_handling_middleware
+from error_utils.framework_helpers.fastapi import FASTAPI_ERROR_HANDLERS, create_error_handling_middleware
 
 
 def success():
@@ -41,7 +41,7 @@ def validation_error(body: Body):
 
 app = FastAPI()
 app.add_middleware(BaseHTTPMiddleware,
-                   dispatch=create_error_handling_middleware(ExceptionsProcessor(*COMMON_ERROR_HANDLERS)))
+                   dispatch=create_error_handling_middleware(ExceptionsProcessor(*FASTAPI_ERROR_HANDLERS)))
 app.router.add_api_route("/", success)
 app.router.add_api_route("/internal_error_500", internal_error_500)
 app.router.add_api_route("/runtime_error", runtime_error)

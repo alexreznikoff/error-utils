@@ -31,14 +31,14 @@ $ pip install error-utils['tornado'] // обработчики для tornado
 from aiohttp import web
 
 from error_utils.errors import ExceptionsProcessor
-from error_utils.framework_helpers.aiohttp import COMMON_ERROR_HANDLERS, create_error_handling_middleware
+from error_utils.framework_helpers.aiohttp import AIOHTTP_ERROR_HANDLERS, create_error_handling_middleware
 
 error_handling_middleware = create_error_handling_middleware(
-  ExceptionsProcessor(*COMMON_ERROR_HANDLERS)
+    ExceptionsProcessor(*AIOHTTP_ERROR_HANDLERS)
 )
 
 app = web.Application(middlewares=[
-  error_handling_middleware
+    error_handling_middleware
 ])
 ```
 
@@ -50,27 +50,27 @@ from typing import Any
 import tornado.web
 
 from error_utils.errors import ExceptionsProcessor
-from error_utils.framework_helpers.tornado import COMMON_ERROR_HANDLERS, handle_error
+from error_utils.framework_helpers.tornado import TORNADO_ERROR_HANDLERS, handle_error
 
-exceptions_processor = ExceptionsProcessor(*COMMON_ERROR_HANDLERS)
+exceptions_processor = ExceptionsProcessor(*TORNADO_ERROR_HANDLERS)
 
 
 class BaseView(tornado.web.RequestHandler):
-  def write_error(self, status_code: int, **kwargs: Any) -> None:
-    status_code, data = handle_error(kwargs["exc_info"][1], exceptions_processor)
-    self.set_status(status_code)
-    self.write(data)
-    return
+    def write_error(self, status_code: int, **kwargs: Any) -> None:
+        status_code, data = handle_error(kwargs["exc_info"][1], exceptions_processor)
+        self.set_status(status_code)
+        self.write(data)
+        return
 
 
 class DivizionByZeroView(BaseView):
-  async def get(self):
-    result = 25 / 0
-    self.write(str(result))
+    async def get(self):
+        result = 25 / 0
+        self.write(str(result))
 
 
 application = tornado.web.Application([
-  (r"/divizion_by_zero", DivizionByZeroView),
+    (r"/divizion_by_zero", DivizionByZeroView),
 ])
 ```
 
