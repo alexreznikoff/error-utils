@@ -50,16 +50,16 @@ from typing import Any
 import tornado.web
 
 from error_utils.errors import ExceptionsProcessor
-from error_utils.framework_helpers.tornado import COMMON_ERROR_HANDLERS
+from error_utils.framework_helpers.tornado import COMMON_ERROR_HANDLERS, handle_error
 
 exceptions_processor = ExceptionsProcessor(*COMMON_ERROR_HANDLERS)
 
 
 class BaseView(tornado.web.RequestHandler):
   def write_error(self, status_code: int, **kwargs: Any) -> None:
-    error = exceptions_processor.get_error(kwargs["exc_info"][1])
-    self.set_status(error.status)
-    self.write(error.detail)
+    status_code, data = handle_error(kwargs["exc_info"][1], exceptions_processor)
+    self.set_status(status_code)
+    self.write(data)
     return
 
 
@@ -98,5 +98,4 @@ try:
 except Exception as exc:
   error = exc_processor.get_error(exc)
   print(error.status)  # 400
-  print(error.detail)  # {"test": ["Test validation error."]}
 ```

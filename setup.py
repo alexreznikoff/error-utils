@@ -25,8 +25,8 @@ setup(
     install_requires=[],
 
     extras_require={
-        "fastapi": ["fastapi>=0.52.0"],
-        "aiohttp": ["aiohttp>=3.0.0"],
+        "fastapi": ["fastapi>=0.52.0", "inflection>=0.3.1"],
+        "aiohttp": ["aiohttp>=3.0.0", "inflection>=0.3.1"],
         "tornado": ["tornado>=5.1.1"],
     },
 

@@ -1,21 +1,26 @@
 from typing import Any
 
+from error_utils.errors.types import ErrorType
+
 
 class BaseError(Exception):
     """Base class for errors."""
+    error_type: str = ErrorType.INTERNAL_ERROR
     code = 500
-    detail = {"error": "Internal error"}
 
-    def __init__(self, code: int = None, detail: Any = None):
+    def __init__(self, message: str = None, detail: Any = None, code: int = None):
         """
-        :param code: Http error code
+        :param message: Error message
         :param detail: Error detail information
+        :param code: Http error code
         """
-        self.detail = detail or self.detail
+        super().__init__(message)
+        self.message = message or self.error_type
+        self.detail = detail
         self.code = code or self.code
 
     def __str__(self):
-        return f'Error: code: {self.code}, detail: {self.detail}'
+        return f'Error: code: {self.code}, message: {self.message}, detail: {self.detail}'
 
 
 class InternalError(BaseError):
@@ -23,20 +28,20 @@ class InternalError(BaseError):
 
 
 class AuthorizationError(BaseError):
+    error_type = ErrorType.AUTHORIZATION_FAILED
     code = 401
-    detail = {"error": "Authorization error"}
 
 
 class BadRequest(BaseError):
+    error_type = ErrorType.BAD_REQUEST
     code = 400
-    detail = {"error": "Bad request"}
 
 
 class AccessDeniedError(BaseError):
+    error_type = ErrorType.ACCESS_DENIED
     code = 403
-    detail = {"error": "Access denied"}
 
 
 class NotFoundError(BaseError):
+    error_type = ErrorType.NOT_FOUND
     code = 404
-    detail = {"error": "Not found"}

@@ -4,11 +4,14 @@ from dataclasses import dataclass
 from typing import Any, Type
 
 from error_utils.errors import BaseError
+from error_utils.errors.types import ErrorType
 
 
 @dataclass
 class Error:
     status: int = None
+    error_type: str = None
+    message: str = None
     detail: Any = None
 
 
@@ -28,7 +31,7 @@ class BaseErrorHandler(AbstractErrorHandler):
     handle_exception = BaseError
 
     def get_error(self, exc: BaseError) -> Error:
-        return Error(status=exc.code, detail=exc.detail)
+        return Error(status=exc.code, error_type=exc.error_type, message=exc.message, detail=exc.detail)
 
 
 class ExceptionsProcessor:
@@ -48,4 +51,4 @@ class ExceptionsProcessor:
 
         logging.exception(exc)
 
-        return Error(status=500, detail={"error": exc.args})
+        return Error(status=500, error_type=ErrorType.INTERNAL_ERROR, message=str(exc), detail=None)

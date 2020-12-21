@@ -15,7 +15,7 @@ def success():
 
 
 def internal_error_500():
-    raise InternalError(detail=["Test external service detail."])
+    raise InternalError("Something went wrong")
 
 
 def runtime_error():
@@ -23,7 +23,7 @@ def runtime_error():
 
 
 def access_denied_error():
-    raise AccessDeniedError(detail={"error": "forbidden"})
+    raise AccessDeniedError(detail={"login": "Forbidden"})
 
 
 def division_by_zero():
@@ -69,45 +69,61 @@ def test_http_error_wrong_method(client):
     resp = client.get("/validation_error")
 
     assert resp.status_code == 405
-    assert resp.json() == {"error": "Method Not Allowed"}
+    assert resp.json() == {
+        "error": "METHOD_NOT_ALLOWED",
+        "message": "METHOD_NOT_ALLOWED",
+        "detail": None,
+    }
 
 
 def test_validation_error_empty_body(client):
     resp = client.post("/validation_error")
 
-    assert resp.status_code == 422
-    assert resp.json() == [
-        {
-            "loc": ["body"],
-            "msg": "field required",
-            "type": "value_error.missing"
-        }
-    ]
+    assert resp.status_code == 400
+    assert resp.json() == {
+        "error": "VALIDATION_ERROR",
+        "message": "VALIDATION_ERROR",
+        "detail": [
+            {
+                "loc": ["body"],
+                "msg": "field required",
+                "type": "value_error.missing",
+            },
+        ],
+    }
 
 
 def test_validation_error_wrong_body(client):
     resp = client.post("/validation_error", json={"id": "hello"}, headers={"X-Request-Id": "12345"})
 
-    assert resp.status_code == 422
-    assert resp.json() == [
-        {
-            "loc": ["body", "id"],
-            "msg": "value is not a valid integer",
-            "type": "type_error.integer",
-        },
-        {
-            "loc": ["body", "user"],
-            "msg": "field required",
-            "type": "value_error.missing",
-        }
-    ]
+    assert resp.status_code == 400
+    assert resp.json() == {
+        "error": "VALIDATION_ERROR",
+        "message": "VALIDATION_ERROR",
+        "detail": [
+            {
+                "loc": ["body", "id"],
+                "msg": "value is not a valid integer",
+                "type": "type_error.integer",
+            },
+            {
+                "loc": ["body", "user"],
+                "msg": "field required",
+                "type": "value_error.missing",
+            }
+        ]
+    }
 
 
 def test_http_not_found_error(client):
     resp = client.get("/not_found")
 
     assert resp.status_code == 404
-    assert resp.json() == {"error": "Not Found"}
+    assert resp.json() == {
+        "error": "NOT_FOUND",
+        "message": "NOT_FOUND",
+        "detail": None,
+    }
 
 
 def test_success_result(client):
@@ -121,25 +137,41 @@ def test_internal_error(client):
     resp = client.get("/internal_error_500")
 
     assert resp.status_code == 500
-    assert resp.json() == ["Test external service detail."]
+    assert resp.json() == {
+        "error": "INTERNAL_ERROR",
+        "message": "Something went wrong",
+        "detail": None,
+    }
 
 
 def test_other_error(client):
     resp = client.get("/runtime_error")
 
     assert resp.status_code == 500
-    assert resp.json() == {"error": ["Test"]}
+    assert resp.json() == {
+        "error": "INTERNAL_ERROR",
+        "message": "Test",
+        "detail": None,
+    }
 
 
 def test_access_denied_error(client):
     resp = client.get("/access_denied")
 
     assert resp.status_code == 403
-    assert resp.json() == {"error": "forbidden"}
+    assert resp.json() == {
+        "error": "ACCESS_DENIED",
+        "message": "ACCESS_DENIED",
+        "detail": {"login": "Forbidden"},
+    }
 
 
 def test_division_by_zero_error(client):
     resp = client.get("/division_by_zero")
 
     assert resp.status_code == 500
-    assert resp.json() == {"error": ["division by zero"]}
+    assert resp.json() == {
+        "error": "INTERNAL_ERROR",
+        "message": "division by zero",
+        "detail": None,
+    }
